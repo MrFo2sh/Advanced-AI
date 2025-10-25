@@ -127,3 +127,69 @@ Typical stopping rules (pre‑pruning):
 - CV: “stratify when in doubt.”
 
 ---
+
+## Worked examples and diagrams
+
+### 1) Entropy and Information Gain (Play Tennis)
+
+- Dataset size: $|S|=14$ with 9 Yes and 5 No.
+
+  - $H(S) = -\tfrac{9}{14}\log_2 \tfrac{9}{14} - \tfrac{5}{14}\log_2 \tfrac{5}{14} \approx 0.94$ bits.
+
+- Candidate split A = Outlook with values {Sunny, Overcast, Rain}:
+  - Sunny: $|S_{Sunny}|=5$ with 2 Yes, 3 No → $H(S_{Sunny}) \approx 0.971$
+  - Overcast: $|S_{Overcast}|=4$ with 4 Yes, 0 No → $H(S_{Overcast}) = 0$
+  - Rain: $|S_{Rain}|=5$ with 3 Yes, 2 No → $H(S_{Rain}) \approx 0.971$
+  - Expected child entropy: $\frac{5}{14}\cdot0.971 + \frac{4}{14}\cdot0 + \frac{5}{14}\cdot0.971 \approx 0.694$
+  - $IG(S,\text{Outlook}) = 0.94 - 0.694 \approx 0.246$ (highest in this dataset)
+
+Result: Split on Outlook first.
+
+Mermaid tree sketch (renders on GitHub and most Markdown previews):
+
+```mermaid
+flowchart TD
+  S[Outlook] -->|Overcast| L1[Play = Yes]
+  S -->|Sunny| H{Humidity?}
+  H -->|High| L2[Play = No]
+  H -->|Normal| L3[Play = Yes]
+  S -->|Rain| W{Wind?}
+  W -->|Weak| L4[Play = Yes]
+  W -->|Strong| L5[Play = No]
+```
+
+ASCII fallback:
+
+```
+Outlook
+ ├─ Overcast → Play=Yes
+ ├─ Sunny
+ │   └─ Humidity
+ │       ├─ High   → Play=No
+ │       └─ Normal → Play=Yes
+ └─ Rain
+     └─ Wind
+         ├─ Weak   → Play=Yes
+         └─ Strong → Play=No
+```
+
+### 2) Gini impurity intuition
+
+- Perfect mix (binary 50/50): $\text{Gini} = 1 - (0.5^2 + 0.5^2) = 0.5$ (impure)
+- Skewed (90/10): $\text{Gini} = 1 - (0.9^2 + 0.1^2) = 0.18$ (purer)
+
+### 3) Regression tree split with MSE
+
+Suppose node targets $y = [1, 1, 2, 2, 8, 9]$ and we try threshold that splits into $[1,1,2,2]$ and $[8,9]$.
+
+- Left mean $\bar{y}_L=1.5$, $\text{MSE}_L = \tfrac{1}{4}\big(4\times0.25\big)=0.25$.
+- Right mean $\bar{y}_R=8.5$, $\text{MSE}_R = \tfrac{1}{2}(0.25+0.25)=0.25$.
+- Weighted MSE $= \tfrac{4}{6}\cdot0.25 + \tfrac{2}{6}\cdot0.25 = 0.25$ (good split because groups are tight around their means).
+
+### 4) Precision/Recall/F1 mini example
+
+Confusion counts: $TP=8,\ FP=2,\ FN=4,\ TN=86$.
+
+- Precision $= 8/(8+2) = 0.80$
+- Recall $= 8/(8+4) = 0.667$
+- $F_1 = 2\cdot\frac{0.80\cdot0.667}{0.80+0.667} \approx 0.727$
