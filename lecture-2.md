@@ -72,7 +72,7 @@ Typical stopping rules (pre‑pruning):
 | $R(T)$                                   | Empirical risk            | Training loss of tree $T$ (e.g., misclassification or SSE). |
 | $\alpha$                                 | Complexity weight         | Penalty coefficient in cost‑complexity pruning.             |
 | $TP, FP, TN, FN$                         | Confusion counts          | True/False Positives/Negatives used to compute metrics.     |
-| $\text{Precision},\ \text{Recall},\ F_1$ | Metrics                   | Derived from $TP,FP,TN,FN$; see formulas above.             |
+| $\text{Precision},\ \text{Recall},\ F_1$ | Metrics                   | Derived from $TP,FP,TN,FN$; see formulas below.             |
 
 ## Functions and terms reference table
 
